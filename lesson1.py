@@ -5,6 +5,22 @@ import re
 
 
 class UrlManager():
+    """ URL管理器
+
+    URL管理器主要负责管理已爬取的URL和未爬取的URL：
+    属性：
+        new_urls：集合类型，保存未爬取的URL
+        old_urls：集合类型，保存已爬取过的URL
+    方法：
+        add_new_url(self, url)：增加新的URL到new_urls
+        add_new_urls(self, urls)：批量增加新的URL到new_urls
+
+        has_new_url(self)：-->bool：判断new_urls是否为空，如结束爬取
+
+        get_new_url(self)：从new_urls中取出一个待爬取的URL返回，同时将其加入到old_urls
+                            标记为已爬取的URL
+    """
+
     def __init__(self):
         self.new_urls = set()
         self.old_urls = set()
@@ -33,6 +49,13 @@ class UrlManager():
 
 
 class HtmlDownloader():
+    """URL下载器，下载url对应的HTML文档，并将期进行解码返回
+
+    属性：
+        无
+    方法：
+        download(self, url)：下载url的内容并将其用utf-8进行解码后返回
+    """
 
     def download(self, url):
         if url is None:
@@ -51,6 +74,20 @@ class HtmlDownloader():
 
 
 class HtmlParser():
+    """HTML解析器，从提供的页面URL及HTML文档中不完整的URL，拼接成新的URL返回
+                    同时返回解析出HTML文档中有用的数据并返回
+
+    属性：
+        无
+    方法：
+        _get_new_urls(self, page_url, soup)：私有方法，按给定条件从HTML文件中
+                                             获得符合要求的URLs
+        _get_new_data(self, page_url, soup)：私有方法，按给定条件从HTML文件中
+                                             获得符合要求的数据或数据所在的URL
+
+        parse(self, page_url, html_doc)：返回上面两个私有方法的返回结果的集合
+    """
+
     def _get_new_urls(self, page_url, soup):
         res_urls = set()
 
@@ -81,6 +118,16 @@ class HtmlParser():
 
 
 class OutPuter():
+    """URL数据输出器，将从URL中获得数据按一定的格式输出
+
+    属性：
+        datas：数据列表
+
+    方法：
+        collect_data(self, data)：对HTML解析器返回的成批数据进行逐个收集，并存放在列表中datas
+        outputer(self)：对datas进行格式化输出或输出到文件中
+    """
+
     def __init__(self):
         self.datas = []
 
